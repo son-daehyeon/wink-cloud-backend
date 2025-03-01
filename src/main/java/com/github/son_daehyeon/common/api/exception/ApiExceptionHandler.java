@@ -1,5 +1,7 @@
 package com.github.son_daehyeon.common.api.exception;
 
+import java.io.IOException;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.authorization.AuthorizationDeniedException;
@@ -54,6 +56,19 @@ public class ApiExceptionHandler {
     public ApiResponse<?> apiException(ApiException e) {
 
         return ApiResponse.error(e);
+    }
+
+    @ExceptionHandler(IOException.class)
+    public Object ioException(IOException e) {
+
+        if (e.getMessage().equals("Broken pipe")) {
+
+            return null;
+        }
+
+        log.error("Server Error", e);
+
+        return ApiResponse.error(HttpStatus.INTERNAL_SERVER_ERROR, "알 수 없는 오류가 발생했습니다.");
     }
 
     @ExceptionHandler(Exception.class)

@@ -7,13 +7,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import com.github.son_daehyeon.common.api.dto.response.ApiResponse;
 import com.github.son_daehyeon.common.docs.swagger.SwaggerConfig;
 import com.github.son_daehyeon.common.validation.custom.Enum;
 import com.github.son_daehyeon.domain.project.__sub__.instance.__sub__.matrix.constant.TimeUnit;
-import com.github.son_daehyeon.domain.project.__sub__.instance.__sub__.matrix.dto.response.InstanceCurrentMatrixResponse;
-import com.github.son_daehyeon.domain.project.__sub__.instance.__sub__.matrix.dto.response.InstanceMatrixResponse;
 import com.github.son_daehyeon.domain.project.__sub__.instance.__sub__.matrix.service.InstanceMatrixService;
 import com.github.son_daehyeon.domain.user.schema.User;
 
@@ -34,15 +32,15 @@ public class InstanceMatrixController {
 
     @GetMapping("/current")
     @Operation(summary = "인스턴스 현재 성능")
-    public ApiResponse<InstanceCurrentMatrixResponse> getCurrentMatrix(@PathVariable String projectId, @PathVariable String instanceId, @AuthenticationPrincipal User user) {
+    public SseEmitter getCurrentMatrix(@PathVariable String projectId, @PathVariable String instanceId, @AuthenticationPrincipal User user) {
 
-        return ApiResponse.ok(instanceMatrixService.getCurrentMatrix(projectId, instanceId, user));
+        return instanceMatrixService.getCurrentMatrix(projectId, instanceId, user);
     }
 
     @GetMapping()
     @Operation(summary = "인스턴스 지속 성능")
-    public ApiResponse<InstanceMatrixResponse> getMatrix(@PathVariable String projectId, @PathVariable String instanceId, @RequestParam(defaultValue = "HOUR") @Enum(enumClass = TimeUnit.class) String timeUnit, @AuthenticationPrincipal User user) {
+    public SseEmitter getMatrix(@PathVariable String projectId, @PathVariable String instanceId, @RequestParam(defaultValue = "HOUR") @Enum(enumClass = TimeUnit.class) String timeUnit, @AuthenticationPrincipal User user) {
 
-        return ApiResponse.ok(instanceMatrixService.getMatrix(projectId, instanceId, TimeUnit.valueOf(timeUnit), user));
+        return instanceMatrixService.getMatrix(projectId, instanceId, TimeUnit.valueOf(timeUnit), user);
     }
 }
